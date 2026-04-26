@@ -7,12 +7,20 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "ingest:311": "tsx scripts/ingest-311.ts",
+    "ingest:hpd": "tsx scripts/ingest-hpd-violations.ts",
+    "ingest:dob": "tsx scripts/ingest-dob-violations.ts",
+    "ingest:mta": "tsx scripts/ingest-mta-transit.ts",
+    "ingest:amenities": "tsx scripts/ingest-amenities.ts",
+    "ingest:all": "tsx scripts/ingest-all.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -45,6 +53,7 @@
     "supertest": "^7.2.2",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.5"
   }
 }

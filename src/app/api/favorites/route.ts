@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { checkRateLimit, getRateLimitKey } from "@/server/middleware/rate-limiter";
 import { resolveRequestUser } from "@/server/auth/request-user";
 import { addFavorite, deleteFavorite, listFavorites } from "@/server/services/favorites.service";
 import { addFavoriteBodySchema, removeFavoriteQuerySchema } from "@/server/validators/favorites";
@@ -46,6 +47,22 @@ export async function POST(request: NextRequest) {
   const user = await resolveRequestUser();
   if (!user) {
     return unauthorizedResponse();
+  }
+
+  const rateLimitKey = getRateLimitKey(request);
+  const rateLimit = checkRateLimit(rateLimitKey, 20);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      {
+        data: null,
+        error: {
+          code: "TOO_MANY_REQUESTS",
+          message: "Rate limit exceeded. Please try again later.",
+        },
+      },
+      { status: 429 },
+    );
   }
 
   const bodyResult = addFavoriteBodySchema.safeParse(await request.json().catch(() => null));
@@ -100,6 +117,22 @@ export async function DELETE(request: NextRequest) {
   const user = await resolveRequestUser();
   if (!user) {
     return unauthorizedResponse();
+  }
+
+  const rateLimitKey = getRateLimitKey(request);
+  const rateLimit = checkRateLimit(rateLimitKey, 20);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      {
+        data: null,
+        error: {
+          code: "TOO_MANY_REQUESTS",
+          message: "Rate limit exceeded. Please try again later.",
+        },
+      },
+      { status: 429 },
+    );
   }
 
   const rawQuery = Object.fromEntries(request.nextUrl.searchParams.entries());
